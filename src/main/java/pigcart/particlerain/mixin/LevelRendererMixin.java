@@ -34,9 +34,14 @@ public class LevelRendererMixin {
     @Shadow
     private int rainSoundTime;
 
+    //TODO: Support mods that add their own splashing mechanics (Particular)
+    //easier to just provide my own alternative to water ripples,
+    //but if this can be rewritten to not just cancel everything that would be good for future-proofing and more choice for users
+    // also maybe a toggle for vanilla splashes
     @Inject(method = "tickRain", at = @At("HEAD"), cancellable = true)
     public void tickRain(Camera camera, CallbackInfo ci) {
-        if (!ParticleRainClient.config.renderVanillaWeather) {
+        //TODO: play sound where particles are actually falling. presence footsteps but for rain drops might not be an awful idea?
+        if (!ParticleRainClient.config.tickVanillaWeather) {
             float f = this.minecraft.level.getRainLevel(1.0F);
             if (f > 0.0F) {
                 Random random = new Random((long) this.ticks * 312987231L);
@@ -56,17 +61,16 @@ public class LevelRendererMixin {
                 if (blockPos2 != null && random.nextInt(3) < this.rainSoundTime++) {
                     this.rainSoundTime = 0;
                     if (blockPos2.getY() > blockPos.getY() + 1 && level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, blockPos).getY() > Mth.floor((float) blockPos.getY())) {
-                        SoundEvent sound = WeatherParticleSpawner.getBiomeSound(level.getBiome(blockPos2), true);
+                        SoundEvent sound = WeatherParticleSpawner.getBiomeSound(blockPos2, true);
                         if (sound != null)
                             this.minecraft.level.playLocalSound(blockPos2, sound, SoundSource.WEATHER, 0.1F, 0.5F, false);
                     } else {
-                        SoundEvent sound = WeatherParticleSpawner.getBiomeSound(level.getBiome(blockPos2), false);
+                        SoundEvent sound = WeatherParticleSpawner.getBiomeSound(blockPos2, false);
                         if (sound != null)
                             this.minecraft.level.playLocalSound(blockPos2, sound, SoundSource.WEATHER, 0.2F, 1.0F, false);
                     }
                 }
             }
-
             ci.cancel();
         }
     }

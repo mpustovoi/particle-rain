@@ -4,7 +4,10 @@
   "package": "pigcart.particlerain.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "LevelRendererMixin"
+    "LevelRendererMixin",
+    "RegistrySyncManagerMixin",
+    "StitcherMixin",
+    "TextureAtlasSpriteMixin"
   ],
   "client": [
   ],
